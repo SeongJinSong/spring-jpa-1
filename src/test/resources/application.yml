@@ -1,0 +1,19 @@
+spring:
+#    datasource:
+#      url: jdbc:h2:mem:test
+#      #;MVCC=TRUE H2 데이터베이스의 MVCC 옵션은 H2 1.4.198 버전부터 제거되었습니다. *1.4.200 버전에서는 MVCC 옵션을 사용하면 오류가 발생
+#      username: sa
+#      password:
+#      driver-class-name: org.h2.Driver
+#
+#    jpa:
+#      hibernate:
+#        ddl-auto: create-drop
+#      properties:
+#        hibernate:
+##          show_sql: true //console out에 출력됨
+#          format_sql: true
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
