@@ -77,7 +77,7 @@ public class ItemController {
     //item에 대한 권한체크하는게 필요하다.
     //업데이트할 객체를 세션에 담을 수 있다. 하지만 요즘 세션 객체는 잘 안쓴다.
 
-    @PostMapping("items/{itemId}/edit")
+    @PostMapping("items/{itemId}/edit3")
     public void updateItem3(@ModelAttribute("form") BookForm form
             ,@PathVariable Long itemId){
         itemService.updateItem3(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
