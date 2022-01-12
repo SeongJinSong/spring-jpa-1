@@ -62,7 +62,7 @@ public class ItemController {
 
     @PostMapping("items/{itemId}/edit")
     public String updateItem(@ModelAttribute("form") BookForm form
-        ,@PathVariable String itemId){
+        ,@PathVariable Long itemId){
         Book book = new Book();
         book.setId(form.getId());
         book.setName(form.getName());
@@ -76,6 +76,14 @@ public class ItemController {
     }
     //item에 대한 권한체크하는게 필요하다.
     //업데이트할 객체를 세션에 담을 수 있다. 하지만 요즘 세션 객체는 잘 안쓴다.
+
+    @PostMapping("items/{itemId}/edit")
+    public void updateItem3(@ModelAttribute("form") BookForm form
+            ,@PathVariable Long itemId){
+        itemService.updateItem3(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+        //변경할게 많으면 DTO를 만들자
+        //itemService.updateItem3(dto)
+    }
 }
 
 
