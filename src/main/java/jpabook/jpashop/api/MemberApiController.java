@@ -9,12 +9,51 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController //@Controller + @ResponseBody
 @RequiredArgsConstructor
 public class MemberApiController {
 
     private final MemberService memberService;
+
+    /**
+     * 조회 API
+     * 엔티티를 리턴하면 유연성이 떨어진다.
+     * @JsonIgnore를 사용할 일이 생기면 안된다.
+     *
+     * 객체 지향의 핵심은 클라이언트이기 때문에
+     * API 스펙이 바뀌게 하면 안된다.
+     *
+     * 스펙 루트는 Array가 되지 않도록 해라
+     * - 스펙 확장이 불가능하다.
+     */
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1(){
+        return memberService.findMembers();
+    }
+
+    @GetMapping("/api/v2/members")
+    public Result membersV2(){
+        List<Member> findMembers =  memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream().map(m -> new MemberDto(m.getName())).collect(toList());
+        return new Result(collect.size(), collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto{
+        private String name;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T>{
+        private int count; // 유연성이 생겼다. 상황에 따라 추가도 가능하다.
+        private T data;
+    }
 
     @PostMapping("/api/v1/members")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member){
