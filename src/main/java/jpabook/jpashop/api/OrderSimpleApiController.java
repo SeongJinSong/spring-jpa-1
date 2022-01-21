@@ -64,6 +64,19 @@ public class OrderSimpleApiController {
         return collect;
     }
 
+    /**
+     * V2: 엔티티를 DTO로 변환
+     */
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3(){
+        //ORDER 2개
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        return orders
+                .stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
+    }
+
     @Data
     static class SimpleOrderDto{
         private Long orderId;
