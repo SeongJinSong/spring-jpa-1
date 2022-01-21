@@ -103,6 +103,10 @@ public class OrderRepository {
      * 실무에서는 QueryDSL을 사용한다.
      */
 
+    /**
+     * API 설계
+     */
+    //재사용성이 좋다.
     public List<Order> findAllWithMemberDelivery() {
        return em.createQuery("select o from Order o"+
                " join fetch o.member m" +
@@ -110,4 +114,13 @@ public class OrderRepository {
             .getResultList();
     }
 
+    // 좀더 최적화가 가능하지만 재사용성이 떨어짐
+    // API 스펙이 Repository에 들어온것과 같다. > 쿼리용 리포지토리 패키지를 따로 관리하자
+    public List<OrderSimpleQueryDto> findOrderDtos() {
+        return em.createQuery("select new jpabook.jpashop.repository.OrderSimpleQueryDto" +
+                        "(o.id, m.name, o.orderDate, o.status, d.address) from Order o" +
+                        " join o.member m"+
+                        " join o.delivery d", OrderSimpleQueryDto.class)
+                .getResultList();
+    }
 }
