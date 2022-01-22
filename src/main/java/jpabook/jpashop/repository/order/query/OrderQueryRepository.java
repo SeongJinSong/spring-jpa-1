@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderQueryRepository {
     private final EntityManager em;
+
+    /**
+     * V4: JPA에서 DTO 직접 조회
+     */
     public List<OrderQueryDto> findOrderQueryDtos() {
         List<OrderQueryDto> result = findOrders(); // query 1번
 
@@ -25,6 +29,9 @@ public class OrderQueryRepository {
         return result;
     }
 
+    /**
+     * V5: 컬렉션 조회 최적화
+     */
     public List<OrderQueryDto> findAllByDto_optimization() {
         List<OrderQueryDto> result = findOrders(); // query 1번
 
@@ -34,6 +41,22 @@ public class OrderQueryRepository {
         result.forEach(o->o.setOrderItems(orderItemMap.get(o.getOrderId())));
 
         return result;
+    }
+
+    /**
+     * V6: 플랫폼 데이터 최적화
+     */
+    public List<OrderFlatDto> findAllByDto_flat() {
+        return em.createQuery(
+                "select new "+
+                        "jpabook.jpashop.repository.order.query.OrderFlatDto"+
+                        "(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)"  +
+                            " from Order o" +
+                            " join o.member m"+
+                            " join o.delivery d"+
+                            " join o.orderItems oi "+
+                            " join oi.item i", OrderFlatDto.class)
+                .getResultList();
     }
 
     private Map<Long, List<OrderItemQueryDto>> findOrderItemMap(List<OrderQueryDto> result) {
