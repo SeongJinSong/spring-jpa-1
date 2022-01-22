@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -41,8 +42,10 @@ public class OrderApiController {
 
     /**
      * 페치 조인
+     * - 1:M:N -> 1 이 된다.
+     * - 일대다 조인시 중복 데이터가 많다.
      * - 페이징 처리가 안된다는 단점이 있다.
-     * - 전체를 DB에서 가져와서 어플리케이션에서 페이징처리한다. -> 메모리 터진다.
+     *   > 전체를 DB에서 가져와서 어플리케이션에서 페이징처리한다. -> 메모리 터진다.
      *
      * - 하이버네이트가 이런 선택을 한 이유
      *   > 일대다 조인을 하는 순간 Order의 기준 자체가 다 틀어져버린다.
@@ -54,6 +57,27 @@ public class OrderApiController {
                 .map(OrderDto::new)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 페이징과 한계 돌파
+     *  - 1:M:N -> 1:1:1 이 된다.
+     *  - 쿼리는 3개를 날리지만 중복데이터는 메모리에 안올라온다!
+     */
+
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_1(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "100")int limit
+    ){
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+        List<OrderDto> result = orders.stream()
+                .map(o->new OrderDto(o))
+                .collect(Collectors.toList());
+        return result;
+    }
+    /**
+     *
+     */
 
     //@Data //toString 등 여러가지를 제공한다.
     @Getter
