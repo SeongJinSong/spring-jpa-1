@@ -79,12 +79,20 @@ public class OrderApiController {
         return result;
     }
     /**
-     *
+     * JPA에서 DTO 직접 조회
      */
 
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4(){
         return orderQueryRepository.findOrderQueryDtos();
+    }
+
+    /**
+     *
+     */
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5(){
+        return orderQueryRepository.findAllByDto_optimization();
     }
 
     //@Data //toString 등 여러가지를 제공한다.
