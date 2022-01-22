@@ -12,6 +12,7 @@ public class JpashopApplication {
 	}
 	@Bean
 	Hibernate5Module hibernate5Module(){
+		//Proxy인 얘들은 JSON으로 만드는것을 안한다.
 		Hibernate5Module hibernate5Module = new Hibernate5Module();
 		//강제 지연 로딩 설정
 //		hibernate5Module.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true);
