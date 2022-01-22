@@ -123,4 +123,22 @@ public class OrderRepository {
                         " join o.delivery d", OrderSimpleQueryDto.class)
                 .getResultList();
     }
+
+    /**
+     * distinct 기능 제공
+     *  - DB의 distinct 쿼리를 날려준다.
+     *      > DB는 모든 컬럼이 달라야 distinct 된다.
+     *  - jpa 자체적 distinct는 Order의 ID값에 따라 중복 제거를 한다.
+     *      > 애플리케이션에 전부 가져오고 컬렉션에 담을때만 중복제거해주는 것
+     */
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order o"+
+                        " join fetch o.member m"+
+                        " join fetch o.delivery d"+
+                        " join fetch o.orderItems oi"+
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
 }

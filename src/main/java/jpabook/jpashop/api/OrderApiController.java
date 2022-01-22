@@ -39,6 +39,22 @@ public class OrderApiController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 페치 조인
+     * - 페이징 처리가 안된다는 단점이 있다.
+     * - 전체를 DB에서 가져와서 어플리케이션에서 페이징처리한다. -> 메모리 터진다.
+     *
+     * - 하이버네이트가 이런 선택을 한 이유
+     *   > 일대다 조인을 하는 순간 Order의 기준 자체가 다 틀어져버린다.
+     *   > 페이징 처리를 하기엔 사이즈가 이상해진다.
+     */
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3(){
+        return orderRepository.findAllWithItem().stream()
+                .map(OrderDto::new)
+                .collect(Collectors.toList());
+    }
+
     //@Data //toString 등 여러가지를 제공한다.
     @Getter
     static class OrderDto {
@@ -61,7 +77,7 @@ public class OrderApiController {
             orderStatus = order.getStatus();
 //            order.getOrderItems().stream().forEach(o->o.getItem().getName()); // 초기화 필요
 //            orderItems = order.getOrderItems();// 위 초기화 없으면 null로 나온다.
-            orderItems = order.getOrderItems().stream().map(OrderItemDto::new).collect(Collectors.toList())
+            orderItems = order.getOrderItems().stream().map(OrderItemDto::new).collect(Collectors.toList());
         }
     }
 
